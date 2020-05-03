@@ -102,13 +102,21 @@
     .catch(() => alert('Something Went Wrong'))
 
   const handleToggleTodo = (id) => (dispatch) => {
-      dispatch(toggleTodoAction(id))
-      return API.saveTodoToggle(id)
-        .catch(() => {
-          dispatch(toggleTodoAction(id));
-          alert('An error occurred! Try again');
-        })
-    }
+    dispatch(toggleTodoAction(id))
+    return API.saveTodoToggle(id)
+      .catch(() => {
+        dispatch(toggleTodoAction(id));
+        alert('An error occurred! Try again');
+      })
+  }
+
+  const handleFetch = () => (dispatch) => Promise.all([
+    API.fetchTodos(),
+    API.fetchGoals(),
+  ]).then(([todos, goals]) => {
+    dispatch(receiveDataAction(todos, goals));
+  })
+    .catch(() => alert('Something Went Wrong'))
 
   function todosReducer(state = [], action) {
     switch (action.type) {
@@ -260,15 +268,6 @@
       )
     }
   }
-
-  const handleFetch = () => (dispatch) => Promise.all([
-      API.fetchTodos(),
-      API.fetchGoals(),
-    ]).then(([todos, goals]) => {
-      dispatch(receiveDataAction(todos, goals));
-    })
-      .catch(() => alert('Something Went Wrong'))
-
 
   class App extends React.Component {
     componentDidMount() {
